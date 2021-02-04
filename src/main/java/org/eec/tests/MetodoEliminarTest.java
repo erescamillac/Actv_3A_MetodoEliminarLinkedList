@@ -35,6 +35,12 @@ public class MetodoEliminarTest {
         System.out.println("Eliminando valores de la lista...");
         System.out.println("Estado INICIAL de la lista: " + list);
         
+        System.out.println("--Test de método reverse()--");
+        list.reverse();
+        
+        System.out.println("--Test .deleteV2(targetVal)");
+        list.deleteV2(-26);
+        
         for(int val : deleteV){
             ++iter;
             System.out.println("---------------------------------------------------------------");
@@ -43,6 +49,7 @@ public class MetodoEliminarTest {
             list.delete(val);
             System.out.println(String.format("DESPUÉS DE haber eliminado valor (%d), lista ACTUALIZADA: %s", val, list));
         }
+        
     } // fin de método main()
     
 }

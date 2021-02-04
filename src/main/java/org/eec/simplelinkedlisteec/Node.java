@@ -34,6 +34,12 @@ public class Node {
         this.nextNode = nextNode;
     }
     
+    public Node cloneNode(){
+        Node cloned = new Node(this.getData());
+        cloned.setNextNode(this.getNextNode());
+        return cloned;
+    }
+    
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();

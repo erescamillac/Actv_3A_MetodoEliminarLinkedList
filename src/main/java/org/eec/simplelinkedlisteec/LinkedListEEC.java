@@ -98,6 +98,7 @@ public class LinkedListEEC {
     } // fin nodeAt
     
     // public delete(int targetVal)
+    // guardar PreviousNode!!!
     public void delete(int targetVal){
         IndexNodeTuple tuple;
         Node targetNode, previousNode;
@@ -122,6 +123,162 @@ public class LinkedListEEC {
             --this.length;
         } // if .getIndex() != -1
     } // fin del método delete()
+    
+    
+    // con propositos de Test ÚNICAMENTE, después eliminar este método.
+    public Node getLastNode(){
+        return this.lastNode;
+    }
+    
+    // método insertAtInit(int value) : inserta el valor indicado AL INICIO de la lista
+    // Cada vez que un valor es insertado al INICIO de la lista
+    // el resto de los nodos SON "RECORRIDOS" hacia la DERECHA.
+    public void insertAtInit(int val){
+        Node formerStartNode, nodeTmp = new Node(val);
+        if(isEmpty()){
+            this.startNode = nodeTmp;
+            this.lastNode = nodeTmp;
+        }else{
+            formerStartNode = this.startNode;
+            // UPDATE this.startnode to point to the "new Node" (nodeTmp)
+            this.startNode = nodeTmp;
+            nodeTmp.setNextNode(formerStartNode);
+            /*
+            No es necesario actualizar this.lastNode ya que la inserción
+            del nuevo nodo se hace AL INICIO de la lista.
+            (Y no al final como sucede con el método .add(int val))
+            */
+        }
+    } // fin del método insertAtInit()
+    
+    // TODO: actualizar this.lastNode
+    // .deleteV2(int targetVal) : status : OK - Production READY!!
+    // metódo .deleteV2(int targetVal) : LISTO para USO en PRODUCCIÓN
+    // TODO : deprecate .delete(int targetVal) method (corregir lógica interna del método para ACTUALIZACIÓN de this.lastNode)
+    public void deleteV2(int targetVal){
+        Node currentNode, previousNode, matchedNode;
+        // Pruba de concepto de conservación del nodo Previo y el nodo 'actual'
+        // System.out.println("....dentro de .deleteV2(int targetVal)");
+        boolean found = false;
+        int idxTmp;
+        
+        if(!isEmpty()){
+            // la lista actual tiene por lo menos 1 nodo
+            currentNode = this.startNode;
+            // previousNode = null;
+            matchedNode = null;
+            idxTmp = -1;
+            
+            do{
+                ++idxTmp;
+                if(idxTmp == 0){
+                    // SI es la "primera" Iteración
+                    previousNode = null;
+                    currentNode = this.startNode;
+                }else{
+                    previousNode = currentNode;
+                    currentNode = currentNode.getNextNode();
+                }
+                
+                if(currentNode != null){
+                    //--INI: Búsqueda normal:
+                    /*
+                    System.out.println("Idx : " + idxTmp);
+                    System.out.println("previousNode : " + previousNode);
+                    System.out.println("currentNode : " + currentNode);
+                    System.out.println("-------------------------------------------------");
+                    System.out.println(String.format("currentNode.data[%d] VS targetValue[%d]...", currentNode.getData(), targetVal));
+                    */
+                    
+                    if(currentNode.getData() == targetVal){
+                        // System.out.println(String.format("MATCH!!! entre [%d] y [%d]", currentNode.getData(), targetVal));
+                        found = true;
+                        matchedNode = currentNode;
+                        // System.out.println("Matched Node : " + matchedNode);
+                        break;
+                    }
+                    
+                    /*
+                    System.out.println("IDX : " + idxTmp);
+                    System.out.println("previousNode: " + previousNode);
+                    System.out.println("currentNode: " + currentNode);
+                    System.out.println("-------------------------------------------------");
+                    */
+                    
+                    //++FIN : Bpusqueda normal
+                }
+                /*
+                else{
+                    System.out.println("previous (Node) : " + previousNode);
+                    System.out.println("currentNode is NULL!");
+                }  
+                */
+                
+                /*
+                previousNode = currentNode;
+                currentNode = currentNode.getNextNode();
+                */
+                
+            }while(currentNode != null);
+            
+            if(found){
+                /*
+                System.out.println(String.format("El valor [%d] fue encontrado.", targetVal));
+                System.out.println("previousNode : " + previousNode);
+                System.out.println("matchedNode : " + matchedNode);
+                */
+                
+                // SI previousNode == null : SIGNIFICA QUE el matchedNode debe SER EL PRIMER NODO
+                // (nodo en el "index" : '0' -Zero-)
+                if(matchedNode != null){
+                    // -- not null
+                    if(previousNode == null){
+                        // matchedNode es el PRIMERO de la lista
+                        // CASO A: matchedNode se en encuentra AL INICIO DE LA LISTA
+                        // BASTA CON ACTUALIZAR .startNode
+                        this.startNode = matchedNode.getNextNode();
+                    }else{
+                        // si previousNode != null : SIGNIFICA que el matchedNode NO es el primero de la lista
+                        // CASO B: matchedNode se encuentra en cualquier OTRA POSICIÓN DISTINTA del INICIO de la LISTA
+                        previousNode.setNextNode(matchedNode.getNextNode());
+                    }
+                    // ++ not null
+                    // VALIDAR SI matchedNode es el ÚLTIMO NODO DE LA LISTA:
+                    if(matchedNode.getNextNode() == null){
+                        // matchedNode ES el ÚLTIMO NODO de la LISTA
+                        // SE REQUIERE ACTUALIZAR .lastNode
+                        this.lastNode = previousNode;
+                    }
+                    this.length--;
+                } // fin not null
+                
+            }else{
+                System.out.println(String.format("El valor [%d] NO fue ENCONTRADO en la lista.", targetVal));
+                // si el valor targetVal NO es ENCONTRADO en la lista: simplemente hacer NADA.
+            }
+        }else{
+            System.out.println("La lista está VACÍA!");
+        }
+    } // fin del método 
+    
+    public LinkedListEEC reverse(){
+        // System.out.println("Dentro del método .reverse()...");
+        LinkedListEEC reversedList = new LinkedListEEC();
+        Node currentNode;
+        int currentVal;
+        if(!isEmpty()){
+            // se garantiza que la lista "original" tiene POR LO MENOS 1 Nodo.
+            currentNode = this.startNode;
+            do{
+                // System.out.println("currentNode: " + currentNode);
+                currentVal = currentNode.getData();
+                // funcionalidad real en .insertAtInit(int val)
+                reversedList.insertAtInit(currentVal);
+                currentNode = currentNode.getNextNode();
+            }while(currentNode != null);
+        }
+        return reversedList;
+    } // fin del método reverse
     
     // comenzar con linearSearch()
     // linearSearc(int) : LISTO para su uso
